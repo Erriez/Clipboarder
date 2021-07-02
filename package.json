@@ -1,0 +1,41 @@
+{
+  "name": "clipboarder",
+  "version": "1.0.0",
+  "description": "Clipboard manager",
+  "author": "Erriez",
+  "copyright": "© 2021, Erriez.",
+  "license": "MIT",
+  "homepage": "https://github.com.com/erriez",
+  "main": "app/main.js",
+  "build": {
+    "appId": "com.erriez.clipboarder",
+    "files": [
+      "app/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "resources"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "publish": null
+  },
+  "scripts": {
+    "start": "node build/start.js",
+    "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder"
+  },
+  "dependencies": {
+    "fs-jetpack": "^4.1.0"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.2.2",
+    "electron": "^13.0.1",
+    "electron-builder": "^22.5.1",
+    "webpack": "^5.30.0",
+    "webpack-cli": "^4.6.0",
+    "webpack-merge": "^5.7.3",
+    "webpack-node-externals": "^3.0.0"
+  }
+}
