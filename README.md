@@ -2,8 +2,19 @@
 
 ## Introduction
 
-This desktop application shares a clipboard between computers via a removable media or cloudstorage.  
-This is useful when there is no direct Ethernet connection between the two computers.
+This desktop application exchanges clipboard between computers via removable or cloud storage.
+This is useful when there is no direct network connection possible between computers.
+
+The following clipboard types can be loaded/saved:
+
+* Plain/text
+* HTML
+* RTF
+* PNG picture
+
+It is recommended to use a KVM switch with USB support to exchange the clipboard via a USB memory stick between two or more computers.
+
+Note: This is a clipboard copier and cannot exchange binaries or files.
 
 ### Screenshot Clipboarder on Ubuntu
 
@@ -16,8 +27,8 @@ This is useful when there is no direct Ethernet connection between the two compu
 * No internet connection required.
 * No automatic updates.
 * Exchange clipboard between computers via:
-  1. USB memory stick, or
-  2. Online storage such as Nextcloud
+  * USB memory stick, or
+  * Online storage such as Nextcloud
 
 ## Installation
 
@@ -25,10 +36,14 @@ Download latest version from the [releases page](https://github.com/Erriez/Clipb
 
 ### Windows
 
-Run the setup `clipboarder Setup x.x.x.exe` to start installation.
-Desktop and Start menu icons are created automatically.
+* Run the setup `clipboarder Setup x.x.x.exe` to start installation.
+* Desktop and Start menu icons are created automatically.
+* An uninstaller is available via `Settings | Apps | Clipboarder <version> | Uninstall`.
+* Application is installed in `%LocalAppData%\Programs\clipboarder\`.
 
 ### Linux
+
+* No installation is required.  
 
 Set execute permission on the file AppImage:
 
@@ -65,6 +80,10 @@ Clipboard saved:
 ### Automatic startup
 
 Enable or disable automatic startup: `Settings | Launch at startup`.
+The `AppImage` or `.exe` should not be moved.
+
+* Windows: `HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\ | clipboarder <version>`
+* Linux: `~/.config/autostart/clipboarder-<version>.AppImage.desktop`
 
 ### Remove clipboard files after load
 
@@ -82,6 +101,13 @@ Several clipboard conversions are available:
 
 Note: Conversions are applied directly in the clipboard as text and are not automatically saved.
 
+### Configuration file
+
+User settings are saved in:
+
+* Windows: `%AppData%\clipboarder\user-preferences.json`
+* Linux: `~/.config/clipboarder/user-preferences.json`
+
 ### Unmounting
 
 Safely unmounting the USB stick is a user responsibility. Unmounting from a menu is planned.
@@ -93,6 +119,7 @@ Building from source requires an internet connection. Open command prompt and ru
 ```bash
 # Clone repository
 $ git clone https://github.com/Erriez/Clipboarder.git
+$ cd Clipboarder
 
 # Install NPM packages
 $ npm install
@@ -119,6 +146,9 @@ NPM dependencies:
 * [clipboard-event](https://www.npmjs.com/package/clipboard-event)
 * [electron](https://www.electronjs.org/)
 * [electron-builder](https://www.electron.build/)
+
+Clipboard documentation
+* [Electron clipboard API](https://www.electronjs.org/docs/api/clipboard)
 
 ### NO MAC support
 
