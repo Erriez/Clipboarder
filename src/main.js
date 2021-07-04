@@ -31,7 +31,7 @@ if (env.name !== "production") {
 const resourcesPath = path.join(app.getAppPath(), 'resources');
 
 // Global variables
-const websiteGithub = 'https://github.com/erriez';
+const websiteGithub = 'https://github.com/Erriez/Clipboarder';
 const websiteDonation = 'https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=FUPLMV8JNMJTQ';
 const clipboardFilename = 'clipboard';
 
