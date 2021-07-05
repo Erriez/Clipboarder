@@ -73,6 +73,22 @@ if (process.platform === 'linux') {
   exit(1);
 }
 
+// Check single instance of the application
+if (!app.requestSingleInstanceLock()) {
+  console.log('Clipboarder is already running.');
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    dialog.showMessageBoxSync({
+      type: 'warning',
+      title: 'Clipboarder',
+      message: 'Clipboarder is already running.',
+      detail: 'Please have a look at the system tray icon.',
+      buttons: ['OK']
+    });
+  });
+}
+
 // Configure auto-launch
 function initAutoLauncher()
 {
