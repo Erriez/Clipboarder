@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This desktop application exchanges clipboard between computers via removable or cloud storage.
+This desktop application exchanges clipboards between computers via removable  storage.
 This is useful when there is no direct network connection possible between computers.
 
 The following clipboard types can be loaded/saved:
@@ -12,7 +12,9 @@ The following clipboard types can be loaded/saved:
 * RTF
 * PNG picture
 
-It is recommended to use a KVM switch with USB support to exchange the clipboard via a USB memory stick between two or more computers.
+It is recommended to use a KVM switch with USB support to exchange the clipboard via a USB memory stick between two or more computers, for example in the picture below:
+
+![Clipboarder overview](screenshots/overview.png)
 
 Note: This is a clipboard copier and cannot exchange binaries or files.
 
@@ -116,6 +118,27 @@ Safely unmounting the USB stick is a user responsibility. Unmounting from a menu
 
 Building from source requires an internet connection. Open command prompt and run the commands:
 
+### NodeJS installation Windows
+
+Download and install [NodeJS for Windows](https://nodejs.org/en/download/).
+
+### NodeJS installation Ubuntu
+
+Node/NPM packages are outdated when installating via `apt`. Install latest version via NVM instead:
+
+```bash
+# Install NodeJS via NVM installer
+$ curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+$ source ~/.profile   
+$ nvm install node 
+
+# Check installation
+$ node --version
+$ npm -v
+```
+
+### Build Windows and Linux
+
 ```bash
 # Clone repository
 $ git clone https://github.com/Erriez/Clipboarder.git
@@ -138,33 +161,63 @@ To start debugging, run the `start` script.
 
 ## Technical details
 
-The application is build around the popular NodeJS [Electron Boilerplate](https://github.com/szwacz/electron-boilerplate). 
+The application is build around the popular NodeJS [Electron Boilerplate](https://github.com/szwacz/electron-boilerplate).
 Reason is easy development, maintenance and deployment.
 
 NPM dependencies:
+
 * [auto-launch](https://www.npmjs.com/package/auto-launch)
 * [clipboard-event](https://www.npmjs.com/package/clipboard-event)
 * [electron](https://www.electronjs.org/)
 * [electron-builder](https://www.electron.build/)
 
 Clipboard documentation
+
 * [Electron clipboard API](https://www.electronjs.org/docs/api/clipboard)
 
-### NO MAC support
+## FAQ
+
+---
+
+Q: Can I transfer the clipboard between Windows and Linux?
+
+A: Yes, Windows - Windows, Linux - Linux and Windows - Linux is supported.
+
+---
+
+Q: I built from source and did not detect clipboard changes on Linux. Any hints?
+
+A: Check execute permission on `node_modules/clipboard-event/platform/clipboard-event-handler-linux`
+which may be missing after NPM install.
+
+---
+
+Q: Is MAC supported?
+
+A: No.
 
 Sorry Apple users, you're using a platform which is not compatible with Windows or Linux.
 
-Without Apple hardware it is impossible for developers to build and test applications. 
+Without Apple hardware it is impossible for developers to build and test applications.
 I'm happy to add MAC support when someone wants to sponsor me by providing a MAC Book Pro.
+
+---
+
+Q: My clipboard is not loaded in original format
+
+A: This Clipboarder supports TXT/RTF/HTML/PNG only. Some applications use a propriatary clipboard format which is not saved/loaded.
+Try `Clipboard Files | Show clipboard info` to identify the formats before the save and after the load to clipboard.
+
+---
 
 ## MIT License
 
-In simple words: 
+In simple words:
+
 * Open source.
 * Do what ever you want with the application.
 * For personal and commercial usage.
 * No warranties.
-* Don't like it? -> Don't use it.
 * Merge requests are welcome.
 
 ## Issues / bugs
