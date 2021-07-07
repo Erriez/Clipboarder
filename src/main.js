@@ -34,7 +34,6 @@ import clipboardListener from "clipboard-event";
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from "env";
-import { exit } from "process";
 
 // Automatic startup
 const AutoLaunch = require('auto-launch');
@@ -111,6 +110,20 @@ if (!app.requestSingleInstanceLock()) {
       message: 'Clipboarder is already running.',
       detail: 'Please have a look at the system tray icon.',
       buttons: ['OK']
+    });
+  });
+}
+
+// Execute shell command, for example 'ls -la /tmp'
+function execShellCommand(cmd) {
+  const exec = require("child_process").exec;
+  return new Promise((resolve, reject) => {
+    console.log('Exec command: ' + cmd)
+    exec(cmd, { maxBuffer: 1024 * 500 }, (error, stdout, stderr) => {
+      console.warn('  Error: ' + error);
+      console.log('  stdout: ' + stdout); 
+      console.log('  stderr: ' + stderr);
+      resolve(stdout ? true : false);
     });
   });
 }
@@ -573,6 +586,23 @@ function showMessagesToggle()
   settings.toggle('showMessages');
 }
 
+function setUnmountPath()
+{
+  var unmountPath = settings.get('unmountPath');
+
+  var result = dialog.showOpenDialogSync({
+    title: 'Unmount path',
+    defaultPath: unmountPath,
+    properties: ['openDirectory']
+  });
+
+  if (result && fs.existsSync(result[0])) {
+    unmountPath = result[0];
+
+    settings.set('unmountPath', unmountPath);
+  }
+}
+
 function autoLaunchToggle()
 {
   console.log('Toggle auto-launch');
@@ -738,6 +768,7 @@ function showFirstLaunchMessage()
 function systemTray(clipboardSynced)
 {
   let menus = [];
+  let clipboardFilesSubmenu = [];
   let settingsSubmenu = [];
   let pathTrayIcon;
 
@@ -807,6 +838,20 @@ function systemTray(clipboardSynced)
     }
   }
 
+  if (process.platform === 'linux') {
+    const unmountPath = settings.get('unmountPath');
+
+    if (fs.existsSync(unmountPath)) {
+      menus.push(
+        {
+          label: 'Unmount', type: 'normal', click: function () {
+            execShellCommand('umount "' + unmountPath + '"');
+            systemTray(false);
+          }
+        });
+      }
+    }
+
   // Conversions
   if (!isClipboardEmpty()) {
     menus.push(
@@ -855,28 +900,45 @@ function systemTray(clipboardSynced)
       });
   }
   
+
+  clipboardFilesSubmenu.push(
+    {
+      label: 'Clipboard path: \'' + settings.get('clipboardPath') + '\'',
+      click: function () {
+        setClipboardPath();
+      }
+    });
+
+  if (process.platform === 'linux') {
+    clipboardFilesSubmenu.push(
+      { 
+        label: 'Unmount path: ' + settings.get('unmountPath'), type: 'normal', click: function () {
+          setUnmountPath();
+          systemTray();
+        }
+      }
+    );
+  }
+
+  clipboardFilesSubmenu.push(
+    {
+      label: 'Show clipboard files', type: 'normal', click: function () {
+        showClipboardFiles();
+      }
+    }, {
+      label: 'Show clipboard info', type: 'normal', click: function () {
+        showClipboardInfo();
+      }
+    }
+  );
+
   // Clipboard files
   menus.push(
     { 
       type: 'separator'
     }, { 
       label: 'Clipboard files',
-      submenu: [
-        {
-          label: 'Clipboard path: \'' + settings.get('clipboardPath') + '\'',
-          click: function () {
-            setClipboardPath();
-          }
-        }, {
-          label: 'Show clipboard files', type: 'normal', click: function () {
-            showClipboardFiles();
-          }
-        }, {
-          label: 'Show clipboard info', type: 'normal', click: function () {
-            showClipboardInfo();
-          }
-        }
-      ]
+      submenu: clipboardFilesSubmenu
     });
 
   // Settings submenu

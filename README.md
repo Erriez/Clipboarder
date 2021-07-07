@@ -132,7 +132,7 @@ User settings are saved in:
 
 ### Unmounting
 
-Safely unmounting the USB stick is a user responsibility. Unmounting from a menu is planned.
+Safely unmounting the USB stick is a user responsibility. Unmounting via a menu is supported on Linux only.
 
 ## Build from source
 
