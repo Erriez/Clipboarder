@@ -34,7 +34,6 @@ import clipboardListener from "clipboard-event";
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from "env";
-import { exception } from "console";
 import { exit } from "process";
 
 // Automatic startup
@@ -201,8 +200,6 @@ function loadSettings()
     // Watch clipboard directory
     fs.watchFile(clipboardPath, { interval: 2000 }, function (event, filename) {
       if (fs.existsSync(clipboardPath)) {
-        //console.log('Clipboard dir \'' + clipboardPath + '\' found');
-
         // Automatically load clipboard from file
         if (clipboardMounted === false) {
           if (settings.get('loadOnMount') && isClipboardFileAvailable()) {
@@ -215,7 +212,6 @@ function loadSettings()
 
         clipboardMounted = true;
       } else {
-        //console.log('Warning: Clipboard dir \'' + clipboardPath + '\' not found');
         systemTray(false);
         clipboardMounted = false;
       }
@@ -423,7 +419,7 @@ function loadClipboard()
       });
     }
   } catch(error) {
-    // if there was some kind of error, return the passed in defaults instead.
+    // Could not load clipboard
     dialog.showMessageBoxSync({
       type: 'error',
       title: 'Clipboarder',
@@ -535,7 +531,9 @@ function setClipboardPath()
   let clipboardPath = settings.get('clipboardPath');
 
   if (clipboardPath === '') {
-    clipboardPath = '/media';
+    if (process.platform === 'linux') {
+      clipboardPath = '/media';
+    }
   }
 
   var result = dialog.showOpenDialogSync({
