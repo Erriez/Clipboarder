@@ -32,6 +32,8 @@ const resourcesPath = path.join(app.getAppPath(), 'resources');
 
 // Global variables
 const websiteGithub = 'https://github.com/Erriez/Clipboarder';
+const websiteGithubIssues = 'https://github.com/Erriez/Clipboarder/issues';
+const websiteGithubReleases = 'https://github.com/Erriez/Clipboarder/releases';
 const websiteDonation = 'https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=FUPLMV8JNMJTQ';
 const clipboardFilename = 'clipboard';
 
@@ -111,7 +113,7 @@ function initAutoLauncher()
 }
 
 
-// To start listening for clipboard changes
+  // To start listening for clipboard changes
 function initClipboardMonitor()
 {
   clipboardListener.startListening();
@@ -889,11 +891,18 @@ function systemTray(clipboardSynced)
           label: 'About',
           click: function () {
             showAbout();
+            shell.openExternal(websiteGithub);
           }
         }, {
-          label: 'Fork me on Github!',
+          label: 'Check updates',
           click: function () {
-            shell.openExternal(websiteGithub);
+            showAbout();
+            shell.openExternal(websiteGithubReleases);
+          }
+        }, {
+          label: 'Report bug/issue/feature request',
+          click: function () {
+            shell.openExternal(websiteGithubIssues);
           }
         }, {
           label: 'Make a donation!',
