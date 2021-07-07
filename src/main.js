@@ -38,6 +38,7 @@ const websiteDonation = 'https://www.paypal.com/donate/?cmd=_s-xclick&hosted_but
 const clipboardFilename = 'clipboard';
 
 let autoLaunchEnabled = false;
+let clipboardMounted = false;
 let clipboardPathLast = '';
 let clipboardTXTFile = '';
 let clipboardHTMLFile = '';
@@ -112,10 +113,15 @@ function initAutoLauncher()
     });
 }
 
+function initClipboardFileMonitor()
+{
+  // Set initial mount state clipboard path
+  clipboardMounted = fs.existsSync(settings.get('clipboardPath'));
+}
 
-  // To start listening for clipboard changes
 function initClipboardMonitor()
 {
+  // To start listening for clipboard changes
   clipboardListener.startListening();
 
   clipboardListener.on('change', () => {
@@ -163,26 +169,33 @@ function loadSettings()
   if (clipboardPathLast !== clipboardPath) {
     // Unwatch previous clipboard directroy
     if (clipboardPathLast) {
+      console.log('Unwatching ' + clipboardPathLast);
       fs.unwatchFile(clipboardPathLast);
+      clipboardPathLast = clipboardPath;
     }
 
     // Watch clipboard directory
     fs.watchFile(clipboardPath, { interval: 2000 }, function (event, filename) {
       if (fs.existsSync(clipboardPath)) {
-        console.log('Clipboard dir \'' + clipboardPath + '\' exists');
+        //console.log('Clipboard dir \'' + clipboardPath + '\' found');
 
         // Automatically load clipboard from file
-        if (settings.get('loadOnMount')) {
-          loadClipboard();
-        } else {
-          systemTray(false);
+        if (clipboardMounted === false) {
+          if (settings.get('loadOnMount') && isClipboardFileAvailable()) {
+            console.log('Load clipboard as clipboard dir restored');
+            loadClipboard();
+          } else {
+            systemTray(false);
+          }
         }
+
+        clipboardMounted = true;
       } else {
-        console.log('Warning: Clipboard dir \'' + clipboardPath + '\' not found');
+        //console.log('Warning: Clipboard dir \'' + clipboardPath + '\' not found');
         systemTray(false);
+        clipboardMounted = false;
       }
     });
-    clipboardPathLast = clipboardPath;
   }
 }
 
@@ -286,9 +299,6 @@ function removeClipboardFiles()
         fs.unlinkSync(clipboardPNGFile);
       }
     }
-
-    // Update system tray
-    systemTray(false);
 
     console.log('Clipboard files removed');
   } catch(error) {
@@ -407,6 +417,9 @@ function clearClipboard()
 
   // Remove clipboard files
   removeClipboardFiles();
+
+  // Update system tray
+  systemTray(false);
 
   // Show success dialogbox
   if (settings.get('showMessages')) {
@@ -860,6 +873,13 @@ function systemTray(clipboardSynced)
       
   settingsSubmenu.push(
     {
+      label: 'Load clipboard from files on mount',
+      type: 'checkbox',
+      checked: settings.get('loadOnMount'),
+      click: function () {
+        loadOnMountToggle();
+      }
+    }, {
       label: 'Remove clipboard files after load',
       type: 'checkbox',
       checked: settings.get('removeAfterLoad'),
@@ -935,6 +955,9 @@ function systemTray(clipboardSynced)
 app.on("ready", () => {
   // Increment launch count
   console.log('Launch count: ' + settings.increment('launchCount'));
+
+  // Initialize clipboard path monitor
+  initClipboardFileMonitor();
 
   // Initialize auto-launcher
   initAutoLauncher();

@@ -5,16 +5,26 @@
 This desktop application exchanges clipboards between computers via removable  storage.
 This is useful when there is no direct network connection possible between computers.
 
-The following clipboard types can be loaded/saved:
-
-* Plain/text
-* HTML
-* RTF
-* PNG picture
-
 It is recommended to use a KVM switch with USB support to exchange the clipboard via a USB memory stick between two or more computers, for example in the picture below:
 
 ![Clipboarder overview](screenshots/overview.png)
+
+## Clipboarder Features
+
+* Double click to install on Windows/Linux.
+* Load/save clipboard types:
+  * Plain/text
+  * HTML
+  * RTF
+  * PNG image
+* Clear clipboard
+* Clipboard conversions:
+  * Case
+  * Newlines
+  * To plain text
+* Optional: Automitically load clipboard on USB mount.
+* Optional: Remove clipboard files after loading clipboard files.
+* Optional: Automatic launch at startup.
 
 Note: This is a clipboard copier and cannot exchange binaries or files.
 
@@ -79,13 +89,23 @@ Clipboard saved:
 
 ![Clipboard saved](resources/clipboard-green.png)
 
-### Automatic startup
+### Clear clipboard
+
+Clears the clipboard and keeps clipboard files.
+
+## Settings
+
+### Automatic launch at startup
 
 Enable or disable automatic startup: `Settings | Launch at startup`.
 The `AppImage` or `.exe` should not be moved.
 
 * Windows: `HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\ | clipboarder <version>`
 * Linux: `~/.config/autostart/clipboarder-<version>.AppImage.desktop`
+
+### Load clipboard files on mount
+
+Enable or disable automatic clipboard load when clipboard directory mounted: `Settings | Load clipboard files on mount`.
 
 ### Remove clipboard files after load
 
@@ -116,64 +136,7 @@ Safely unmounting the USB stick is a user responsibility. Unmounting from a menu
 
 ## Build from source
 
-Building from source requires an internet connection. Open command prompt and run the commands:
-
-### NodeJS installation Windows
-
-Download and install [NodeJS for Windows](https://nodejs.org/en/download/).
-
-### NodeJS installation Ubuntu
-
-Node/NPM packages are outdated when installating via `apt`. Install latest version via NVM instead:
-
-```bash
-# Install NodeJS via NVM installer
-$ curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
-$ source ~/.profile   
-$ nvm install node 
-
-# Check installation
-$ node --version
-$ npm -v
-```
-
-### Build Windows and Linux
-
-```bash
-# Clone repository
-$ git clone https://github.com/Erriez/Clipboarder.git
-$ cd Clipboarder
-
-# Install NPM packages
-$ npm install
-
-# Run
-$ npm run start
-
-# Create release on Windows (NSIS installer) or Linux (AppImage)
-$ npm run release
-```
-
-## Debugging
-
-Open the clipboarder directory with the free [Visual Studio Code](https://code.visualstudio.com/).  
-To start debugging, run the `start` script.
-
-## Technical details
-
-The application is build around the popular NodeJS [Electron Boilerplate](https://github.com/szwacz/electron-boilerplate).
-Reason is easy development, maintenance and deployment.
-
-NPM dependencies:
-
-* [auto-launch](https://www.npmjs.com/package/auto-launch)
-* [clipboard-event](https://www.npmjs.com/package/clipboard-event)
-* [electron](https://www.electronjs.org/)
-* [electron-builder](https://www.electron.build/)
-
-Clipboard documentation
-
-* [Electron clipboard API](https://www.electronjs.org/docs/api/clipboard)
+See [BUILD.md](BUILD.md)
 
 ## FAQ
 
