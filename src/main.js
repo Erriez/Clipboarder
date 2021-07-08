@@ -786,27 +786,39 @@ function systemTray(clipboardSynced)
   let clipboardFilesSubmenu = [];
   let settingsSubmenu = [];
   let pathTrayIcon;
+  let toolTipText = '';
 
   // Load settings from configuration file
   loadSettings();
 
   // Set system tray icon
   if (!fs.existsSync(settings.get('clipboardPath'))) {
+    toolTipText = 'Clipboard unmounted.';
     pathTrayIcon = path.join(resourcesPath, 'clipboard-red.png');
   } else {
     if (clipboardSynced) {
+      toolTipText = 'Clipboard saved!';
       pathTrayIcon = path.join(resourcesPath, 'clipboard-green.png');
     } else {
-      pathTrayIcon = path.join(resourcesPath, 'clipboard-yellow.png');
+      if (isClipboardEmpty()) {
+        toolTipText = 'Clipboard empty.';
+        pathTrayIcon = path.join(resourcesPath, 'clipboard-gray.png');
+      } else {
+        toolTipText = 'Clipboard unsaved.';
+        pathTrayIcon = path.join(resourcesPath, 'clipboard-yellow.png');
+      }
     }
   }
 
-  // Create system tray
+  // Create system tray when not exists
   if (tray === null) {
     tray = new Tray(pathTrayIcon);
   } else {
     tray.setImage(pathTrayIcon);
   }
+
+  // Set clipboard tooltip (Does not work under Ubuntu)
+  tray.setToolTip(toolTipText);
 
   // -----------------------------------------------------------------------------------------
   // Main menu

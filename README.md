@@ -89,6 +89,10 @@ Clipboard saved:
 
 ![Clipboard saved](resources/clipboard-green.png)
 
+Clipboard empty:
+
+![Clipboard empty](resources/clipboard-gray.png)
+
 ### Clear clipboard
 
 Clears the clipboard and keeps clipboard files.
