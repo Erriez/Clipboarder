@@ -21,7 +21,7 @@ $ node --version
 $ npm -v
 ```
 
-### Build Windows and Linux
+### Build for Windows and Linux
 
 ```bash
 # Clone repository
@@ -34,8 +34,20 @@ $ npm install
 # Run
 $ npm run start
 
-# Create release on Windows (NSIS installer) or Linux (AppImage)
-$ npm run release
+# Optional: Test electron-builder
+$ node_modules/electron-builder/cli.js --help
+
+# Create release on Windows for Windows (NSIS installer)
+$ npm run release-windows
+
+# Create release on Linux x64 for Linux (AppImage)
+$ npm run release-linux
+
+# Create release on Linux x64 or armv7l for armv7l or Linux (AppImage)
+$ npm run release-armv7l
+
+# Create release on Linux x64 or armv7l for arm64 Linux (AppImage)
+$ npm run release-arm64
 ```
 
 ## Node clipboard-event package

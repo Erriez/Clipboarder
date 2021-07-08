@@ -31,7 +31,10 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "start": "node build/start.js",
-    "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder"
+    "release-linux": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --linux",
+    "release-windows": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --windows",
+    "release-armv7l": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --armv7l",
+    "release-arm64": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --arm64"
   },
   "dependencies": {
     "auto-launch": "^5.0.5",

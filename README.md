@@ -11,7 +11,7 @@ It is recommended to use a KVM switch with USB support to exchange the clipboard
 
 ## Clipboarder Features
 
-* Double click to install on Windows/Linux.
+* Double click to install on Windows and run on Linux / Raspberry Pi (armv7l/amd64).
 * Load/save clipboard types:
   * Plain/text
   * HTML
@@ -34,7 +34,7 @@ Note: This is a clipboard copier and cannot exchange binaries or files.
 
 ## Prerequisites
 
-* Windows or Linux (Raspberry Pi planned)
+* Windows / Linux / Raspberry Pi Raspbian.
 * No administrator and no root access needed.
 * No internet connection required.
 * No automatic updates.
