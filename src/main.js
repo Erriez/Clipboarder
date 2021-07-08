@@ -85,19 +85,6 @@ const settings = new Settings({
   }
 });
 
-// Get absolute path executable
-if (process.platform === 'linux') {
-  // Linux .AppImage started
-  executablePath = process.env.APPIMAGE;
-} else if (process.platform === 'win32') {
-  // Windows .exe started
-  executablePath = process.env.PORTABLE_EXECUTABLE_FILE;
-} else {
-  executablePath = '';
-  console.log('Error: platform ' + process.platform + ' not supported');
-  exit(1);
-}
-
 // Check single instance of the application
 if (!app.requestSingleInstanceLock()) {
   console.log('Clipboarder is already running.');
@@ -131,6 +118,29 @@ function execShellCommand(cmd) {
 // Configure auto-launch
 function initAutoLauncher()
 {
+  // Get absolute path executable for auto-launcher
+  if (process.platform === 'linux') {
+    // Linux .AppImage started
+    executablePath = process.env.APPIMAGE;
+  } else if (process.platform === 'win32') {
+    // Windows .exe started
+    if ('PORTABLE_EXECUTABLE_FILE' in process.env) {
+      // Executable built with electron-build type "portable"
+      executablePath = process.env.PORTABLE_EXECUTABLE_FILE;
+    } else if (path.basename(app.getAppPath()) == 'app.asar') {
+      // Executable built with electron-build type "nsis" and is running from 
+      // "%LOCALAPPDATA%/Programs/clipboarder/resources/app.asar/clipboarder.exe"
+      executablePath = app.getPath('exe');
+    } else {
+      // Not available when lanunching from a debugger
+      return;
+    }
+  } else {
+    console.log('Error: platform ' + process.platform + ' not supported');
+    exit(1);
+  }
+
+  // Create new auto-launcher
   autoLauncher = new AutoLaunch({
     name: 'Clipboarder',
     path: executablePath
@@ -141,7 +151,7 @@ function initAutoLauncher()
     .then(function(isEnabled) {
       autoLaunchEnabled = isEnabled;
 
-      // Update system tray icon
+      // Rebuild system tray menu's
       systemTray(false);
     })
     .catch(function(err) {
