@@ -43,10 +43,10 @@ $ npm run release-windows
 # Create release on Linux x64 for Linux (AppImage)
 $ npm run release-linux
 
-# Create release on Linux x64 or armv7l for armv7l or Linux (AppImage)
+# Create release on Linux x64 or armv7l for armv7l Linux (AppImage)
 $ npm run release-armv7l
 
-# Create release on Linux x64 or armv7l for arm64 Linux (AppImage)
+# Create release on Linux x64 or arm64 for arm64 Linux (AppImage)
 $ npm run release-arm64
 ```
 
