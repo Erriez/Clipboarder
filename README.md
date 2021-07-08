@@ -148,13 +148,6 @@ A: Yes, Windows - Windows, Linux - Linux and Windows - Linux is supported.
 
 ---
 
-Q: I built from source and did not detect clipboard changes on Linux. Any hints?
-
-A: Check execute permission on `node_modules/clipboard-event/platform/clipboard-event-handler-linux`
-which may be missing after NPM install.
-
----
-
 Q: Is MAC supported?
 
 A: No.

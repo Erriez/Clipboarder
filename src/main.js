@@ -52,13 +52,14 @@ if (env.name !== "production") {
 // Resources path
 const resourcesPath = path.join(app.getAppPath(), 'resources');
 
-// Global variables
+// Constants
 const websiteGithub = 'https://github.com/Erriez/Clipboarder';
 const websiteGithubIssues = 'https://github.com/Erriez/Clipboarder/issues';
 const websiteGithubReleases = 'https://github.com/Erriez/Clipboarder/releases';
 const websiteDonation = 'https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=FUPLMV8JNMJTQ';
 const clipboardFilename = 'clipboard';
 
+// Global variables
 let autoLaunchEnabled = false;
 let clipboardMounted = false;
 let clipboardPathLast = '';
@@ -68,10 +69,11 @@ let clipboardRTFFile = '';
 let clipboardPNGFile = '';
 let executablePath = '';
 
+// Global null pointers
 let autoLauncher = null;
 let tray = null;
 
-// Instantiate settings class
+// Instantiate settings class with default values
 const settings = new Settings({
   configName: 'user-preferences',
   defaults: {
@@ -85,20 +87,23 @@ const settings = new Settings({
   }
 });
 
-// Check single instance of the application
-if (!app.requestSingleInstanceLock()) {
-  console.log('Clipboarder is already running.');
-  app.quit();
-} else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
-    dialog.showMessageBoxSync({
-      type: 'warning',
-      title: 'Clipboarder',
-      message: 'Clipboarder is already running.',
-      detail: 'Please have a look at the system tray icon.',
-      buttons: ['OK']
+// Check single application instance
+function checkSingleAppInstance()
+{
+  if (!app.requestSingleInstanceLock()) {
+    console.log('Clipboarder is already running.');
+    app.quit();
+  } else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+      dialog.showMessageBoxSync({
+        type: 'warning',
+        title: 'Clipboarder',
+        message: 'Clipboarder is already running.',
+        detail: 'Please have a look at the system tray icon.',
+        buttons: ['OK']
+      });
     });
-  });
+  }
 }
 
 // Execute shell command, for example 'ls -la /tmp'
@@ -132,7 +137,7 @@ function initAutoLauncher()
       // "%LOCALAPPDATA%/Programs/clipboarder/resources/app.asar/clipboarder.exe"
       executablePath = app.getPath('exe');
     } else {
-      // Not available when lanunching from a debugger
+      // Not available when launching from a debugger
       return;
     }
   } else {
@@ -803,8 +808,10 @@ function systemTray(clipboardSynced)
     tray.setImage(pathTrayIcon);
   }
 
+  // -----------------------------------------------------------------------------------------
   // Main menu
   if (fs.existsSync(settings.get('clipboardPath'))) {
+    // Clipboard path exists when USB stick mounted
     if (!isClipboardEmpty()) {
       menus.push(
         { 
@@ -814,15 +821,6 @@ function systemTray(clipboardSynced)
             saveClipboard();
           }
         });
-
-      // menus.push(
-      //   { 
-      //     label: 'Unmount \'' + settings.get('clipboardPath') + '\'',
-      //     type: 'normal',
-      //     click: function () {
-      //       something('unmount ' + settings.get('clipboardPath'));
-      //     }
-      //   });
     }
 
     if (isClipboardFileAvailable()) {
@@ -848,6 +846,7 @@ function systemTray(clipboardSynced)
     }
   }
 
+  // Show unmount on Linux only
   if (process.platform === 'linux') {
     const unmountPath = settings.get('unmountPath');
 
@@ -862,12 +861,12 @@ function systemTray(clipboardSynced)
       }
     }
 
-  // Conversions
+  // -----------------------------------------------------------------------------------------
+  // Menu Convert case
   if (!isClipboardEmpty()) {
+    menus.push({ type: 'separator' });
     menus.push(
       { 
-        type: 'separator'
-      }, { 
         label: 'Convert case',
         submenu: [
           {
@@ -882,7 +881,12 @@ function systemTray(clipboardSynced)
             }
           }
         ]
-      }, {
+      });
+    
+    // -----------------------------------------------------------------------------------------
+    // Menu Convert newlines
+    menus.push(
+      {
         label: 'Convert newlines',
         submenu: [
           {
@@ -897,7 +901,12 @@ function systemTray(clipboardSynced)
             }
           }
         ]
-      }, {
+      });
+    
+    // -----------------------------------------------------------------------------------------
+    // Menu Convert type
+    menus.push(
+      {
         label: 'Convert type',
         submenu: [
           {
@@ -910,7 +919,8 @@ function systemTray(clipboardSynced)
       });
   }
   
-
+  // -----------------------------------------------------------------------------------------
+  // Menu clipboard files
   clipboardFilesSubmenu.push(
     {
       label: 'Clipboard path: \'' + settings.get('clipboardPath') + '\'',
@@ -942,113 +952,95 @@ function systemTray(clipboardSynced)
     }
   );
 
-  // Clipboard files
-  menus.push(
-    { 
-      type: 'separator'
-    }, { 
-      label: 'Clipboard files',
-      submenu: clipboardFilesSubmenu
-    });
+  menus.push({ type: 'separator' });
+  menus.push({ label: 'Clipboard files', submenu: clipboardFilesSubmenu });
 
+  // -----------------------------------------------------------------------------------------
   // Settings submenu
   if (executablePath && fs.existsSync(executablePath)) {
     // Auto-launch submenu is only availble for compiled .Appimage or .exe with absolute path
     settingsSubmenu.push(
       {
-        label: 'Launch at startup',
         type: 'checkbox',
+        label: 'Launch at startup',
         checked: autoLaunchEnabled,
         click: function () {
           autoLaunchToggle();
         }
       });
   }
-      
+
   settingsSubmenu.push(
     {
-      label: 'Load clipboard from files on mount',
       type: 'checkbox',
+      label: 'Load clipboard from files on mount',
       checked: settings.get('loadOnMount'),
       click: function () {
         loadOnMountToggle();
       }
     }, {
-      label: 'Remove clipboard files after load',
       type: 'checkbox',
+      label: 'Remove clipboard files after load',
       checked: settings.get('removeAfterLoad'),
       click: function () {
         removeAfterLoadToggle();
       }
     }, {
-      label: 'Show messages',
       type: 'checkbox',
+      label: 'Show messages',
       checked: settings.get('showMessages'),
       click: function () {
         showMessagesToggle();
       }
     });
-
-  // Settings
-  menus.push(
-    {
-      label: 'Settings',
-      submenu: settingsSubmenu
-    });
+  menus.push({ label: 'Settings', submenu: settingsSubmenu });
   
-  // Help
-  menus.push(
-    { 
-      label: 'Help',
-      submenu: [
-        {
-          label: 'About',
-          click: function () {
-            showAbout();
-            shell.openExternal(websiteGithub);
-          }
-        }, {
-          label: 'Check updates',
-          click: function () {
-            showAbout();
-            shell.openExternal(websiteGithubReleases);
-          }
-        }, {
-          label: 'Report bug/issue/feature request',
-          click: function () {
-            shell.openExternal(websiteGithubIssues);
-          }
-        }, {
-          label: 'Make a donation!',
-          click: function () {
-            shell.openExternal(websiteDonation);
-            settings.set('donated', true);
-          }
-        }
-      ]
-    });
-
-  // Exit
-  menus.push(
-    { 
-      type: 'separator'
-    },
-    { 
-      label: 'Exit', type: 'normal', click: function () {
-        app.exit(0);
+  // -----------------------------------------------------------------------------------------
+  // Menu Help
+  const helpSubmenu = [
+    {
+      label: 'About',
+      click: function () {
+        showAbout();
+        shell.openExternal(websiteGithub);
       }
-    });
+    }, {
+      label: 'Check updates',
+      click: function () {
+        showAbout();
+        shell.openExternal(websiteGithubReleases);
+      }
+    }, {
+      label: 'Report bug/issue/feature request',
+      click: function () {
+        shell.openExternal(websiteGithubIssues);
+      }
+    }, {
+      label: 'Make a donation!',
+      click: function () {
+        shell.openExternal(websiteDonation);
+        settings.set('donated', true);
+      }
+    }
+  ];
+  menus.push({ label: 'Help', submenu: helpSubmenu });
 
-  // Create context menu
-  const contextMenu = Menu.buildFromTemplate(menus);
+  // -----------------------------------------------------------------------------------------
+  // Menu Exit
+  menus.push({ type: 'separator' });
+  menus.push({ label: 'Exit', click: function () { app.exit(0); } });
 
-  // Set context menu
-  tray.setContextMenu(contextMenu);
+  // -----------------------------------------------------------------------------------------
+  // Set context menu system tray
+  tray.setContextMenu(Menu.buildFromTemplate(menus));
 }
 
 app.on("ready", () => {
   // Increment launch count
-  console.log('Launch count: ' + settings.increment('launchCount'));
+  settings.increment('launchCount');
+
+  // Check single application instance
+  checkSingleAppInstance();
 
   // Initialize clipboard path monitor
   initClipboardFileMonitor();

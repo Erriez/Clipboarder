@@ -38,6 +38,38 @@ $ npm run start
 $ npm run release
 ```
 
+## Node clipboard-event package
+
+This project has a dependency on [clipboard-event package](https://github.com/sudhakar3697/node-clipboard-event#readme) to
+generate an event when clipboard change is detected. It runs an optimized C application `clipboard-event-handler` in the background.
+
+### Linux: Built from source
+
+The executable flag should be set after installing the clipboard-event package via NPM, otherwise no clipboard changes are detected:
+
+```bash
+# Set execute flag
+$ chmod +x Clipboarder/node_modules/clipboard-event/platform/clipboard-event-handler-linux
+```
+
+The executable must be rebuild from source to support Raspberry Pi (Rasbian).
+
+Build from source for Ubuntu or Rasbian:
+
+```bash
+# When this build error occurs:
+    clipboard-event-handler-linux.c:4:10: fatal error: X11/extensions/Xfixes.h: No such file or directory
+        4 | #include <X11/extensions/Xfixes.h>
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+    compilation terminated.
+# Install system dependency:
+$ sudo apt install libxtst-dev
+
+# Build executable
+$ cd Clipboarder/node_modules/clipboard-event/platform
+$ gcc clipboard-event-handler-linux.c -o clipboard-event-handler-linux -lX11 -lXfixes
+```
+
 ## Debugging
 
 Open the clipboarder directory with the free [Visual Studio Code](https://code.visualstudio.com/).  
