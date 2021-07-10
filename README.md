@@ -7,7 +7,7 @@ This is useful when there is no direct network connection possible between compu
 
 It is recommended to use a KVM switch with USB support to exchange the clipboard via a USB memory stick between two or more computers, for example in the picture below:
 
-![Clipboarder overview](screenshots/overview.png)
+![Clipboarder overview](screenshots/overview.gif)
 
 ## Clipboarder Features
 
