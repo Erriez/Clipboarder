@@ -5,7 +5,8 @@
   "author": "Erriez",
   "copyright": "© 2021, Erriez.",
   "license": "MIT",
-  "homepage": "https://github.com.com/erriez",
+  "homepage": "https://github.com/erriez/clipboarder",
+  "url": "https://github.com/erriez/clipboarder",
   "main": "app/main.js",
   "build": {
     "appId": "com.erriez.clipboarder",
