@@ -35,6 +35,9 @@ import clipboardListener from "clipboard-event";
 // in config/env_xxx.json file.
 import env from "env";
 
+// Execute synchronous shell command
+const execSync = require('child_process').execSync;
+
 // Automatic startup
 const AutoLaunch = require('auto-launch');
 
@@ -104,20 +107,6 @@ function checkSingleAppInstance()
       });
     });
   }
-}
-
-// Execute shell command, for example 'ls -la /tmp'
-function execShellCommand(cmd) {
-  const exec = require("child_process").exec;
-  return new Promise((resolve, reject) => {
-    console.log('Exec command: ' + cmd)
-    exec(cmd, { maxBuffer: 1024 * 500 }, (error, stdout, stderr) => {
-      console.warn('  Error: ' + error);
-      console.log('  stdout: ' + stdout); 
-      console.log('  stderr: ' + stderr);
-      resolve(stdout ? true : false);
-    });
-  });
 }
 
 // Configure auto-launch
@@ -247,8 +236,11 @@ function loadSettings()
   }
 }
 
-function saveClipboard()
+function saveClipboard(unmount)
 {
+  let msg = '';
+  let detail = '';
+
   // Get clipboard formats
   const clipboardFormats = clipboard.availableFormats();
 
@@ -300,25 +292,42 @@ function saveClipboard()
       }
     }
 
-    // Update system tray icon
+    // Update system tray icon before unmount
     systemTray(true);
 
-    console.log('Saved clipboard data!');
+    if (unmount) {
+      if (unmountClipboardFiles()) {
+        msg = 'Clipboard saved and unmounted!';
+      } else {
+        msg = 'Error: Unmount failed';
+        detail = 'Clipboard saved, but cannot unmount. Check unmount path.';
+      }
+    } else {
+      msg = 'Clipboard saved!';
+    }
+
+    console.log(msg);
 
     if (settings.get('showMessages')) {
       dialog.showMessageBoxSync({
         type: 'info',
         title: 'Clipboarder',
-        message: 'Clipboard saved!',
+        message: msg,
+        detail: detail,
         buttons: ['OK']
       });
     }
   } catch(error) {
+    console.log(error);
+
+    // Update system tray icon
+    systemTray(false);
+
     dialog.showMessageBoxSync({
       type: 'error',
       title: 'Clipboarder',
       message: 'Clipboard save error',
-      detail: 'Could not save clipboard to \'' + clipboardDataFile + '\'',
+      detail: 'Could not save clipboard to \'' + settings.get('clipboardPath') + '\'',
       buttons: ['OK']
     });
   }
@@ -618,6 +627,26 @@ function setUnmountPath()
   }
 }
 
+function unmountClipboardFiles()
+{
+  const unmountPath = settings.get('unmountPath');
+
+  if (process.platform === 'linux' && unmountPath && fs.existsSync(unmountPath)) {
+    console.log('Unmounting ' + unmountPath);
+
+    try {
+      // Run Linux unmount command
+      execSync('umount "' + unmountPath + '"');
+      
+      return true;
+    } catch (err) {
+      console.log(err.toString());
+    }
+  }
+
+  return false;
+}
+
 function autoLaunchToggle()
 {
   console.log('Toggle auto-launch');
@@ -830,9 +859,22 @@ function systemTray(clipboardSynced)
           label: 'Save clipboard', 
           type: 'normal',
           click: function () {
-            saveClipboard();
+            // Save clipboard, no unmount
+            saveClipboard(false);
           }
         });
+
+      if (fs.existsSync(settings.get('unmountPath'))) {
+        menus.push(
+          { 
+            label: 'Save clipboard && unmount', 
+            type: 'normal',
+            click: function () {
+              // Save clipboard and unmount
+              saveClipboard(true);
+            }
+          });
+      }
     }
 
     if (isClipboardFileAvailable()) {
@@ -860,13 +902,11 @@ function systemTray(clipboardSynced)
 
   // Show unmount on Linux only
   if (process.platform === 'linux') {
-    const unmountPath = settings.get('unmountPath');
-
-    if (fs.existsSync(unmountPath)) {
+    if (fs.existsSync(settings.get('unmountPath'))) {
       menus.push(
         {
           label: 'Unmount', type: 'normal', click: function () {
-            execShellCommand('umount "' + unmountPath + '"');
+            unmountClipboardFiles();
             systemTray(false);
           }
         });
