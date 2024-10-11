@@ -55,7 +55,7 @@ Download latest version from the [releases page](https://github.com/Erriez/Clipb
 
 ### Linux
 
-* No installation is required.  
+* No installation is required.
 
 Set execute permission on the file AppImage:
 
@@ -184,6 +184,3 @@ In simple words:
 
 Please report [issues here](https://github.com/Erriez/Clipboarder/issues).
 
-## Donations
-
-A [small donation](https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=FUPLMV8JNMJTQ) is appreciated, for example to implement MAC support.
