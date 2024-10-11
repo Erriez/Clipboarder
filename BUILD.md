@@ -13,7 +13,7 @@ Node/NPM packages are outdated when installating via `apt`. Install latest versi
 ```bash
 # Install NodeJS via NVM installer
 $ curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
-$ source ~/.profile   
+$ source ~/.profile
 $ nvm install node 
 
 # Check installation
@@ -30,6 +30,10 @@ $ cd Clipboarder
 
 # Install NPM packages
 $ npm install
+
+# Set permission / owner chrome-sandbox
+$ sudo chown root:root node_modules/electron/dist/chrome-sandbox
+$ sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
 
 # Run
 $ npm run start
@@ -84,7 +88,7 @@ $ gcc clipboard-event-handler-linux.c -o clipboard-event-handler-linux -lX11 -lX
 
 ## Debugging
 
-Open the clipboarder directory with the free [Visual Studio Code](https://code.visualstudio.com/).  
+Open the clipboarder directory with the free [Visual Studio Code](https://code.visualstudio.com/).
 To start debugging, run the `start` script.
 
 ## Technical details
