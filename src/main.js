@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Erriez
+ * Copyright (c) 2021-2024 Erriez
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -694,7 +694,7 @@ function showAbout()
     detail: 
       'Installed version: ' + app.getVersion() + '\n' +
       'Developer alias: Erriez\n' +
-      'Copyright: 2021\n' +
+      'Copyright: 2024\n' +
       'License: MIT\n' +
       'Supported platforms: Windows & Linux\n' +
       'Application type: Donationware' +
