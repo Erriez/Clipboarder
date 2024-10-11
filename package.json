@@ -38,20 +38,20 @@
     "release-arm64": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --arm64"
   },
   "dependencies": {
-    "auto-launch": "^5.0.5",
-    "clipboard-event": "^1.5.0",
-    "fs-jetpack": "^4.1.0"
+    "auto-launch": "^5.0.6",
+    "clipboard-event": "^1.6.0",
+    "fs-jetpack": "^5.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "babel-loader": "^8.2.2",
-    "electron": "^13.0.1",
-    "electron-builder": "^22.5.1",
-    "source-map-support": "^0.5.6",
-    "webpack": "^5.30.0",
-    "webpack-cli": "^4.6.0",
-    "webpack-merge": "^5.7.3",
+    "@babel/core": "^7.25.8",
+    "@babel/preset-env": "^7.25.8",
+    "babel-loader": "^9.2.1",
+    "electron": "^32.2.0",
+    "electron-builder": "^25.1.7",
+    "source-map-support": "^0.5.21",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-merge": "^6.0.1",
     "webpack-node-externals": "^3.0.0"
   }
 }
